@@ -6,20 +6,27 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/30 16:16:47 by fvastena          #+#    #+#             */
-/*   Updated: 2023/09/30 23:58:11 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/09 13:50:48 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_usleep(__useconds_t time)
-{
-	__uint64_t	start;
+// void	ft_usleep(uint64_t time)
+// {
+// 	uint64_t	start;
 
-	start = gettime();
-	while ((gettime() - start) < time)
-		usleep(time / 10);
-	return (0);
+// 	start = gettime();
+// 	while ((gettime() - start) < (uint64_t)time)
+// 		usleep(time / 10);
+// }
+
+void	ft_usleep(uint64_t ms)
+{
+	const uint64_t	start = gettime();
+
+	while (gettime() - start < ms)
+		usleep(100);
 }
 
 __uint64_t gettime(void)
@@ -28,5 +35,5 @@ __uint64_t gettime(void)
 
 	if (gettimeofday(&tv, NULL) != 0)
 		return (-1);
-	return ((tv.tv_sec * (__uint64_t)1000) + (tv.tv_usec / 1000));
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }

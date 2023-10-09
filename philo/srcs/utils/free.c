@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 22:43:42 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/03 16:42:08 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/09 15:46:22 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void	ft_free_datas(t_data **datas)
 {
-
+	/* printf("free_id...\n");
+	if ((*datas)->id)
+		free((*datas)->id); */
 	printf("free_eating...\n");
 	if ((*datas)->eating)
 		free((*datas)->eating);

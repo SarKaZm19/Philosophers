@@ -6,12 +6,23 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 22:43:23 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/03 19:11:54 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/09 15:44:29 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+/* void	init_ids(t_data *datas)
+{
+	int	i;
+
+	i = -1;
+	while (++i < datas->nb_philos)
+	{
+		datas->id[i] = i;
+		printf("id[%d] = %d", i, datas->id[i]);
+	}
+} */
 void	init_forks(t_data *datas)
 {
 	int	i;
@@ -39,6 +50,11 @@ void	init_datas(t_data *datas, int ac, char **av)
 			return ;
 	}
 	printf("init_alloc_var...\n");
+/* 	datas->id = malloc(sizeof(int) * datas->nb_philos);
+	if (!datas->id)
+		return ;
+	memset(datas->eating, FALSE, datas->nb_philos); */
+	
 	datas->eating = malloc(sizeof(int) * datas->nb_philos);
 	if (!datas->eating)
 		return ;
@@ -64,22 +80,24 @@ void	init_datas(t_data *datas, int ac, char **av)
 		return ;
 	memset(datas->forks, 0, datas->nb_philos);
 
-	printf("init_forks lock...\n");
+	//printf("init_forks lock...\n");
 	init_forks(datas);
-	printf("init_datas lock...\n");
+	//init_ids(datas);
+	//printf("init_datas lock...\n");
 	pthread_mutex_init(&datas->lock, NULL);
-	printf("init_write lock...\n");
+	//printf("init_write lock...\n");
 	pthread_mutex_init(&datas->write, NULL);
-	printf("print_datas...\n");
-	print_datas(datas);
+	//printf("print_datas...\n");
+
+	//print_datas(datas);
 }
 
 void	init_null(t_data *datas)
 {
 	datas->dead = FALSE;
 	datas->nb_philos = 0;
-	datas->id = 0;
 	datas->nb_meal = 0;
+	datas->id = 0;
 	datas->eating = NULL;
 	datas->count_eat = NULL;
 	datas->time_to_die = 0;

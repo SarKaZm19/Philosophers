@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 19:36:09 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/03 19:10:16 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/09 19:46:07 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ void	print_datas(t_data *datas)
 	i = -1;
 	while (++i < datas->nb_philos)
 		printf("count_eat = %d\n", datas->count_eat[i]);
-	printf("time_to_die = %ld\n", datas->time_to_die);
-	printf("time_to_eat = %ld\n", datas->time_to_eat);
-	printf("time_to_sleep = %ld\n", datas->time_to_sleep);
-	printf("time_start = %ld\n", datas->time_start);
+	printf("time_to_die = %llu\n", datas->time_to_die);
+	printf("time_to_eat = %llu\n", datas->time_to_eat);
+	printf("time_to_sleep = %llu\n", datas->time_to_sleep);
+	printf("time_start = %llu\n", datas->time_start);
 	i = -1;
 	while (++i < datas->nb_philos)
-		printf("last_meal = %ld\n", datas->last_meal[i]);
+		printf("last_meal = %llu\n", datas->last_meal[i]);
 	i = -1;
 	while (++i < datas->nb_philos)
 		printf("mutex_fork = %p\n", &datas->forks[i]);
@@ -42,11 +42,11 @@ void	print_datas(t_data *datas)
 
 void	messages(t_data *dt, int id, char *str)
 {
-	__uint64_t	time;
+	//__uint64_t	time;
 
 	pthread_mutex_lock(&dt->write);
-	time = gettime() - dt->time_start;
-	printf("%lu %d %s\n", time, id, str);
+	//time = gettime() - dt->time_start;
+	printf("%llu %d %s\n", gettime() - dt->time_start, id, str);
 	pthread_mutex_unlock(&dt->write);
 }
 
@@ -82,16 +82,36 @@ void	p_eating(t_data *dt, int id)
 {
 	take_forks(dt, id);
 	messages(dt, id, "is eating");
-	usleep(dt->time_to_eat * 1000);
-
-	//dt->eating = TRUE;
-	//ft_usleep(dt->time_to_eat);
-	//dt->eating = FALSE;
-	//dt->last_meal = gettime() - dt->time_start;
+	//usleep(dt->time_to_eat * 1000);
+	dt->last_meal[dt->id] = gettime() - dt->time_start;
+	dt->eating[dt->id] = TRUE;
+	ft_usleep(dt->time_to_eat);
+	dt->eating[dt->id] = FALSE;
 	drop_forks(dt, id);
 	messages(dt, id, "is sleeping");
-	usleep(dt->time_to_sleep * 1000);
+	//usleep(dt->time_to_sleep * 1000);
+	ft_usleep(dt->time_to_sleep);
 	messages(dt, id, "is thinking");
+}
+
+int_fast8_t	check_state(t_data *datas)
+{
+	uint64_t	elapsed;
+	uint64_t	actual;
+
+	actual = gettime() - datas->time_start;
+	elapsed = actual - datas->last_meal[datas->id];
+	printf("elapsed = %llu\n", actual);
+	if (!(actual < datas->time_to_die && datas->eating[datas->id] == FALSE))
+	{
+		printf("coucou\n");
+		pthread_mutex_lock(&datas->write);
+		datas->id_dead = datas->id;
+		datas->dead = TRUE;
+		pthread_mutex_unlock(&datas->write);
+		return (0);
+	}
+	return (1);
 }
 
 void	*thread_function(void *datas_ptr)
@@ -105,22 +125,35 @@ void	*thread_function(void *datas_ptr)
 	id += 1;
 	curr_id = id;
 	pthread_mutex_unlock(&dt->lock);
-	if (curr_id % 2 == 1)
-		usleep((dt->time_to_eat / 2) * 1000);
 	if (dt->nb_philos == 1)
 	{
-		printf("end\n");
+		take_forks(dt, curr_id);
+		ft_usleep(dt->time_to_die);
+		messages(dt, curr_id, "died");
 	}
 	else
-		p_eating(dt, curr_id);
+	{
+		if ((curr_id & 1) == 0)
+			ft_usleep(100);
+		while (check_state(dt) && dt->dead == FALSE)
+		{
+			p_eating(dt, curr_id);
+		}
+	}
 	return (NULL);
 }
 
 /* void	monitor(t_data *datas)
 {
-	while (datas->dead == FALSE)
+	while (1)
 	{
-		
+		if (datas->dead == TRUE)
+		{
+			pthread_mutex_lock(&datas->write);
+			messages(datas, id, "died");
+			pthread_mutex_unlock(&datas->write);
+			break ;
+		}
 	}
 } */
 
@@ -135,15 +168,22 @@ void	threading(t_data *datas)
 			perror("create");
 			return ;
 		}
-		//ft_usleep(1);
 		i++;
 	}
-	//monitor(datas);
-	/* while (1)
+/* 	while (1)
 	{
+		check_state(datas);
 		if (datas->dead == TRUE)
+		{
+			pthread_mutex_lock(&datas->lock);
+			messages(datas, datas->id_dead, "is dead");
+			pthread_mutex_unlock(&datas->lock);
+
 			break ;
+		}
 	} */
+	//monitor(datas);
+
 	i = 0;
 	while (i < datas->nb_philos)
 	{
@@ -170,11 +210,11 @@ int main(int ac, char **av)
 		return (usage_error());
 	else
 	{
-		printf("init_null...\n");
+		//printf("init_null...\n");
 		init_null(&datas);
-		printf("init_datas...\n");
+		//printf("init_datas...\n");
 		init_datas(&datas, ac, av);
-		printf("threading...\n");
+		//printf("threading...\n");
 		threading(&datas);
 		printf("end...\n");
 		//ministruct avec les data accessibles et le mutex dans la struct datas
@@ -192,7 +232,7 @@ void	time_test(void)
 	gettimeofday(&start_time, NULL);
 
 	printf("%ld\n", start_time.tv_sec);
-	printf("%ld\n", start_time.tv_usec);
+	printf("%d\n", start_time.tv_usec);
 	int ret;
 	char buf;
 	while (1)
@@ -210,10 +250,10 @@ void	time_test(void)
         end_time.tv_usec += 1000000; // 1 million (microseconds) to correct for overflow
     }
 	printf("%ld\n", end_time.tv_sec - start_time.tv_sec);
-	printf("%ld\n", end_time.tv_usec - start_time.tv_usec);
+	printf("%d\n", end_time.tv_usec - start_time.tv_usec);
 	time_t newtime_s;
 	suseconds_t newtime_us;
 	newtime_s = end_time.tv_sec - start_time.tv_sec; 
 	newtime_us = end_time.tv_usec - start_time.tv_usec;
-	printf("time elapsed = %ld,%ld\n", newtime_s, newtime_us);
+	printf("time elapsed = %ld,%d\n", newtime_s, newtime_us);
 }

@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 19:36:15 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/03 16:37:07 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/09 19:13:59 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,9 @@ typedef struct s_data
 {
 	bool			dead;
 	int				nb_philos;
-	int				id;
 	int				nb_meal;
+	int				id;
+	int				id_dead;
 	int				*eating;
 	int				*count_eat;
 	__uint64_t		time_to_die;
@@ -64,7 +65,7 @@ int	ft_atoi(const char *s);
 
 // utils/time.c
 __uint64_t gettime(void);
-int	ft_usleep(__useconds_t time);
+void	ft_usleep(uint64_t time);
 
 //mains.c
 void	print_datas(t_data *datas);
