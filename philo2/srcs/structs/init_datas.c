@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 22:43:23 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/11 19:12:33 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/18 19:31:55 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,18 @@ void	init_philos(t_data *datas, char **av)
 		datas->philos[i].is_dead = FALSE;
 		datas->philos[i].is_eating = FALSE;
 		datas->philos[i].count_eat = 0;
-		datas->philos[i].th_p = 0;
-		datas->philos[i].time_to_die = (__uint64_t) ft_atoi(av[2]);
+		datas->philos[i].time_to_die = datas->death_time;
 		datas->philos[i].time_to_eat = (__uint64_t) ft_atoi(av[3]);
 		datas->philos[i].time_to_sleep = (__uint64_t) ft_atoi(av[4]);
 		datas->philos[i].last_meal = 0;
 		datas->philos[i].r_fork = &datas->forks[i];
-		datas->philos[i].l_fork = &datas->forks[0];
-		datas->philos[i].p_lock = &datas->lock;
-		datas->philos[i].p_write = &datas->write;
+		if (i != datas->nb_philos - 1)
+			datas->philos[i].l_fork = &datas->forks[i + 1];
+		else
+			datas->philos[i].l_fork = &datas->forks[0];
+		pthread_mutex_init(&datas->philos[i].dead_m, NULL);
+		datas->philos[i].datas = datas;
 	}
-	datas->philos[i].l_fork = &datas->forks[i + 1];
-
 }
 
 void	init_datas(t_data *datas, int ac, char **av)
@@ -73,9 +73,14 @@ void	init_datas(t_data *datas, int ac, char **av)
 		if (datas->nb_meal == 0)
 			return ;
 	}
+	datas->death_time = (__uint64_t) ft_atoi(av[2]);
 	printf("init_alloc_var...\n");
 	datas->philos = malloc(sizeof(t_philo) * datas->nb_philos);
 	if (!datas->philos)
+		return ;
+
+	datas->thid = malloc(sizeof(t_philo) * datas->nb_philos);
+	if (!datas->thid)
 		return ;
 
 	datas->forks = malloc(sizeof(pthread_mutex_t) * datas->nb_philos);
@@ -90,6 +95,7 @@ void	init_datas(t_data *datas, int ac, char **av)
 	init_philos(datas, av);
 	//printf("init_datas lock...\n");
 	pthread_mutex_init(&datas->lock, NULL);
+	pthread_mutex_init(&datas->glob_dead_m, NULL);
 	//pthread_mutex_init(&datas->dead_mt, NULL);
 	//printf("init_write lock...\n");
 	pthread_mutex_init(&datas->write, NULL);
@@ -102,7 +108,7 @@ void	init_null(t_data *datas)
 {
 	datas->glob_dead = FALSE;
 	datas->nb_philos = 0;
-	datas->nb_meal = 0;
+	datas->nb_meal = -1;
 	datas->prog_start = 0;
 	datas->philos = NULL;
 	datas->forks = NULL;

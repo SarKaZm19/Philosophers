@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 22:43:42 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/11 18:35:15 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/18 15:56:30 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@ void	ft_free_datas(t_data **datas)
 	printf("freeing last_meal...\n");
 	if ((*datas)->last_meal)
 		free((*datas)->last_meal); */
+	printf("freeing thids...\n");
+	if ((*datas)->thid)
+		free((*datas)->thid);
 	printf("freeing philos...\n");
 	if ((*datas)->philos)
 		free((*datas)->philos);
@@ -39,6 +42,9 @@ void	ft_free_datas(t_data **datas)
 	pthread_mutex_destroy(&(*datas)->lock);
 	int i = -1;
 	while (++i < (*datas)->nb_philos)
+	{
+		pthread_mutex_destroy(&(*datas)->philos[i].dead_m);
 		pthread_mutex_destroy(&(*datas)->forks[i]);
+	}
 
 }
