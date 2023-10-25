@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 19:36:15 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/24 21:12:42 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/25 18:50:02 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,21 @@
 # include <stdlib.h> // malloc
 # include <string.h> // 
 
-typedef enum
+typedef enum e_bool
 {
 	FALSE,
 	TRUE
-}			bool;
+}			t_bool;
 
 typedef struct s_philo
 {
+	t_bool			is_eating;
 	int				id;
 	int				count_eat;
-	__uint64_t		last_meal;
-	__uint64_t		time_to_die;
-	__uint64_t		time_to_eat;
-	__uint64_t		time_to_sleep;
+	int64_t			last_meal;
+	int64_t			time_to_die;
+	int64_t			time_to_eat;
+	int64_t			time_to_sleep;
 	pthread_mutex_t	*r_fork;
 	pthread_mutex_t	*l_fork;
 	struct s_data	*datas;
@@ -42,14 +43,14 @@ typedef struct s_philo
 
 typedef struct s_data
 {
-	bool			glob_dead;
+	t_bool			glob_dead;
 	int				nb_philos;
 	int				nb_meal;
 	int				err_catch;
-	uint64_t		prog_start;
-	__uint64_t		death_time;
-	__uint64_t		eat_time;
-	__uint64_t		pillow_time;
+	int64_t			prog_start;
+	int64_t			death_time;
+	int64_t			eat_time;
+	int64_t			pillow_time;
 	t_philo			*philos;
 	pthread_t		*thid;
 	pthread_mutex_t	*forks;
@@ -57,8 +58,12 @@ typedef struct s_data
 }					t_data;
 
 //structs/init_datas.c
-void		init_null(t_data *datas);
 int			init_datas(t_data *datas, int ac, char **av);
+void		init_null(t_data *datas);
+
+//struct/init_utils.c
+int			verif_args(t_data *d);
+int			ft_mutex_init(t_data *datas);
 
 // threads/forks.c
 void		drop_forks(t_philo *ph);
@@ -76,13 +81,14 @@ void		ft_error(t_data *datas, int errcode, char *str);
 int			usage_error(void);
 
 //utils/free.c
+void		ft_destroy_mutexes(t_data **datas);
 void		ft_free_datas(t_data **datas);
 
 // utils/ft_atoi.c
 int			ft_atoi(const char *s);
 
 // utils/time.c
-__uint64_t	gettime(void);
+int64_t		gettime(void);
 void		ft_usleep(uint64_t time);
 
 #endif

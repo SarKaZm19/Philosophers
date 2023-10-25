@@ -1,38 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   errors.c                                           :+:      :+:    :+:   */
+/*   init_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/29 22:44:34 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/25 19:03:54 by fvastena         ###   ########.fr       */
+/*   Created: 2023/10/25 18:12:48 by fvastena          #+#    #+#             */
+/*   Updated: 2023/10/25 18:52:35 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_err_msg(int errcode, char *str)
+int	verif_args(t_data *d)
 {
-	if (errcode == 0)
-		printf("Args format\n");
-	else if (errcode == 1)
+	if (d->death_time < 0 || d->eat_time < 0 || d->pillow_time < 0
+		|| d->nb_philos <= 0)
 	{
-		printf("syscall error :\n");
-		perror(str);
+		ft_error(d, 0, NULL);
+		return (1);
 	}
+	return (0);
 }
 
-void	ft_error(t_data *datas, int errcode, char *str)
+int	ft_mutex_init(t_data *datas)
 {
-	datas->err_catch = 1;
-	ft_err_msg(errcode, str);
-	ft_free_datas(&datas);
-}
+	int	i;
 
-int	usage_error(void)
-{
-	printf("Usage: ./philo nb_philo time_to_die time_to_eat time_to_sleep"
-		" [nb_time_each_philo_must_eat]\n");
-	return (1);
+	i = -1;
+	if (pthread_mutex_init(&(datas->lock), NULL))
+		return (1);
+	while (++i < datas->nb_philos)
+	{
+		if (pthread_mutex_init(&(datas->forks[i]), NULL))
+		{
+			pthread_mutex_destroy(&datas->lock);
+			return (1);
+		}
+	}
+	return (0);
 }

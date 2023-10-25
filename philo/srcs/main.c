@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 19:36:09 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/24 21:20:20 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/25 18:51:27 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,13 @@ void	p_eating(t_philo *ph)
 	take_forks(ph);
 	messages(ph, "is eating");
 	pthread_mutex_lock(&ph->datas->lock);
+	ph->is_eating = TRUE;
 	ph->last_meal = gettime();
 	if (ph->datas->nb_meal >= 0)
 		ph->count_eat++;
 	pthread_mutex_unlock(&ph->datas->lock);
 	ft_usleep(ph->time_to_eat);
+	ph->is_eating = FALSE;
 	drop_forks(ph);
 }
 
@@ -83,15 +85,14 @@ void	print_datas(t_data *datas)
 
 void	threading(t_data *datas)
 {
-	int	i = 0;
-	print_datas(datas);
+	int	i;
+
+	i = 0;
 	while (i < datas->nb_philos)
 	{
-		if (pthread_create(&(datas->thid[i]), NULL, &thread_function, (void *)&datas->philos[i]) != 0)
-		{
-			ft_error(datas, 1, "pthread_create");
-			return ;
-		}
+		if (pthread_create(&(datas->thid[i]), NULL, &thread_function,
+				(void *)&datas->philos[i]) != 0)
+			return (ft_error(datas, 1, "pthread_create"));
 		i++;
 	}
 	monitor_fct(datas);
@@ -99,16 +100,14 @@ void	threading(t_data *datas)
 	while (i < datas->nb_philos)
 	{
 		if (pthread_join(datas->thid[i], NULL) != 0)
-		{
-			ft_error(datas, 1, "pthread_join");
-			return ;
-		}
+			return (ft_error(datas, 1, "pthread_join"));
 		i++;
 	}
+	ft_destroy_mutexes(&datas);
 	ft_free_datas(&datas);
 }
 
-int main(int ac, char **av)
+int	main(int ac, char **av)
 {
 	t_data			datas;
 
