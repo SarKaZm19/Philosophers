@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 19:36:09 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/25 18:51:27 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/26 14:16:10 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	p_eating(t_philo *ph)
 	pthread_mutex_lock(&ph->datas->lock);
 	ph->is_eating = TRUE;
 	ph->last_meal = gettime();
-	if (ph->datas->nb_meal >= 0)
+	if (ph->datas->nb_meal > 0)
 		ph->count_eat++;
 	pthread_mutex_unlock(&ph->datas->lock);
 	ft_usleep(ph->time_to_eat);
@@ -40,7 +40,7 @@ void	*thread_function(void *ph_ptr)
 		ft_usleep(ph->time_to_die);
 		drop_forks(ph);
 	}
-	while (!check_state(ph->datas))
+	while (end_cond(ph->datas))
 	{
 		p_eating(ph);
 		messages(ph, "is sleeping");
@@ -48,39 +48,6 @@ void	*thread_function(void *ph_ptr)
 		messages(ph, "is thinking");
 	}
 	return (NULL);
-}
-
-void	print_datas(t_data *datas)
-{
-	printf("err_catch = %d\n", datas->err_catch);
-	printf("glob_dead = %d\n", datas->glob_dead);
-	printf("nb_meal = %d\n", datas->nb_meal);
-	printf("nb_philos = %d\n", datas->nb_philos);
-	printf("prog_start = %llu\n", datas->prog_start);
-	printf("time_to_die = %llu\n", datas->death_time);
-	printf("time_to_eat = %llu\n", datas->eat_time);
-	printf("time_to_sleep = %llu\n", datas->pillow_time);
-	printf("lock = %p\n", &datas->lock);
-	int i = 0;
-	while (i < datas->nb_philos)
-	{
-		printf("fork[%d] = %p\n", i, &datas->forks[i]);
-		i++;
-	}
-	i = 0;
-	while (i < datas->nb_philos)
-	{
-		printf("philo->id = %d\n", datas->philos[i].id);
-		printf("thid = %p\n", datas->thid[i]);
-		printf("philo->count_eat = %d\n", datas->philos[i].count_eat);
-		printf("philo->last_meal = %llu\n", datas->philos[i].last_meal);
-		printf("philo->time_to_die = %llu\n", datas->philos[i].time_to_die);
-		printf("philo->time_to_eat = %llu\n", datas->philos[i].time_to_eat);
-		printf("philo->time_to_sleep = %llu\n", datas->philos[i].time_to_sleep);
-		printf("philo->r_fork = %p\n", datas->philos[i].r_fork);
-		printf("philo->l_fork = %p\n", datas->philos[i].l_fork);
-		i++;
-	}
 }
 
 void	threading(t_data *datas)

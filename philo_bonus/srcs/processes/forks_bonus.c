@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   time_bonus.c                                       :+:      :+:    :+:   */
+/*   forks_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/26 14:52:23 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 18:49:58 by fvastena         ###   ########.fr       */
+/*   Created: 2023/10/26 14:41:30 by fvastena          #+#    #+#             */
+/*   Updated: 2023/10/26 17:52:28 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	ft_usleep(uint64_t ms)
+void	drop_forks(t_philo *ph)
 {
-	uint64_t	start;
+	sem_post(ph->datas->forks);
+	sem_post(ph->datas->forks);
 
-	start = gettime();
-	while (gettime() - start < ms)
-		usleep(100);
 }
 
-int64_t	gettime(void)
+void	take_forks(t_philo *ph)
 {
-	struct timeval	tv;
-
-	if (gettimeofday(&tv, NULL) != 0)
-		return (-1);
-	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	sem_wait(ph->datas->forks);
+	messages(ph, "has taken a fork");
+	sem_wait(ph->datas->forks);
+	messages(ph, "has taken a fork");
 }

@@ -1,41 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   monitor.c                                          :+:      :+:    :+:   */
+/*   monitor_bonus.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/24 20:20:43 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 16:33:16 by fvastena         ###   ########.fr       */
+/*   Created: 2023/10/26 15:22:06 by fvastena          #+#    #+#             */
+/*   Updated: 2023/10/26 19:27:53 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
 int	end_cond(t_data *dt)
 {
 	int	i;
 
 	i = -1;
-	pthread_mutex_lock(&dt->lock);
+	sem_wait(dt->lock);
 	if (dt->glob_dead == TRUE)
 	{
-		pthread_mutex_unlock(&dt->lock);
+		sem_post(dt->lock);
 		return (0);
 	}
 	while (++i < dt->nb_philos)
 	{
 		if (dt->philos[i].count_eat < dt->nb_meal || dt->nb_meal == -1)
 		{
-			pthread_mutex_unlock(&dt->lock);
+			sem_post(dt->lock);
 			return (1);
 		}
 	}
-	pthread_mutex_unlock(&dt->lock);
+	sem_post(dt->lock);
 	return (0);
 }
 
-void	monitor_fct(void *data_ptr)
+int	monitor_fct(void *data_ptr)
 {
 	t_data	*dt;
 	int		i;
@@ -46,17 +46,11 @@ void	monitor_fct(void *data_ptr)
 		i = -1;
 		while (++i < dt->nb_philos)
 		{
-			pthread_mutex_lock(&dt->lock);
-			if (gettime() - dt->philos[i].last_meal >= dt->death_time
-				&& dt->philos[i].is_eating == FALSE)
-			{
-				dt->glob_dead = TRUE;
-				printf("%llu	%d died\n", gettime() - dt->prog_start, i + 1);
-			}
-			pthread_mutex_unlock(&dt->lock);
+			///sem_wait(dt->lock);
+			//sem_post(dt->lock);
 			if (!end_cond(dt))
-				return ;
+				return (1);
 		}
 	}
-	return ;
+	return (0);
 }

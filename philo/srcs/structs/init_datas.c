@@ -6,29 +6,28 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 22:43:23 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/25 18:52:29 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/26 18:44:48 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static int	ft_alloc(t_data *datas)
+static void	ft_alloc(t_data *datas)
 {
 	datas->philos = malloc(sizeof(t_philo) * datas->nb_philos);
 	if (!datas->philos)
-		return (ft_error(datas, 1, "malloc"), 1);
+		return (ft_error(datas, 1, "malloc"));
 	memset(datas->philos, 0, datas->nb_philos);
 	datas->forks = malloc(sizeof(pthread_mutex_t) * datas->nb_philos);
 	if (!datas->forks)
-		return (ft_error(datas, 1, "malloc"), 1);
+		return (ft_error(datas, 1, "malloc"));
 	memset(datas->forks, 0, datas->nb_philos);
 	datas->thid = malloc(sizeof(t_philo) * datas->nb_philos);
 	if (!datas->thid)
-		return (ft_error(datas, 1, "malloc"), 1);
+		return (ft_error(datas, 1, "malloc"));
 	memset(datas->thid, 0, datas->nb_philos);
 	if (ft_mutex_init(datas))
-		return (ft_error(datas, 1, "mutex_init"), 1);
-	return (0);
+		return (ft_error(datas, 1, "mutex_init"));
 }
 
 static void	init_philos(t_data *datas)
@@ -54,7 +53,7 @@ static void	init_philos(t_data *datas)
 	}
 }
 
-void	init_times(t_data *datas, int ac, char **av)
+static void	init_times(t_data *datas, int ac, char **av)
 {
 	long long	dtime;
 	long long	etime;
@@ -64,7 +63,7 @@ void	init_times(t_data *datas, int ac, char **av)
 	if (ac == 6)
 	{
 		datas->nb_meal = ft_atoi(av[5]);
-		if (datas->nb_meal < 0)
+		if (datas->nb_meal <= 0)
 			return (ft_error(datas, 0, NULL));
 	}
 	dtime = ft_atoi(av[2]);
@@ -82,8 +81,8 @@ int	init_datas(t_data *datas, int ac, char **av)
 	init_times(datas, ac, av);
 	if (datas->err_catch)
 		return (1);
-	datas->err_catch = verif_args(datas);
-	datas->err_catch = ft_alloc(datas);
+	verif_args(datas);
+	ft_alloc(datas);
 	if (datas->err_catch)
 		return (1);
 	datas->prog_start = gettime();

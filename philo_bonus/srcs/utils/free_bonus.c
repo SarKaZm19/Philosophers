@@ -1,31 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   time_bonus.c                                       :+:      :+:    :+:   */
+/*   free_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/26 14:52:23 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 18:49:58 by fvastena         ###   ########.fr       */
+/*   Created: 2023/10/26 14:52:09 by fvastena          #+#    #+#             */
+/*   Updated: 2023/10/26 19:42:58 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	ft_usleep(uint64_t ms)
+void	ft_destroy_semaphores(t_data *datas)
 {
-	uint64_t	start;
+	int	i;
 
-	start = gettime();
-	while (gettime() - start < ms)
-		usleep(100);
+	i = -1;
+	sem_close(datas->forks);
+	sem_close(datas->lock);
+	sem_close(datas->process);
+	sem_unlink("s_forks");
+	sem_unlink("s_lock");
+	sem_unlink("s_process");
 }
 
-int64_t	gettime(void)
+void	ft_free_datas(t_data **datas)
 {
-	struct timeval	tv;
-
-	if (gettimeofday(&tv, NULL) != 0)
-		return (-1);
-	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+	if ((*datas)->philos)
+		free((*datas)->philos);
 }

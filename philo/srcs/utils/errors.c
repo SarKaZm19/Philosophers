@@ -6,13 +6,13 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 22:44:34 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/25 19:03:54 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/26 13:49:43 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_err_msg(int errcode, char *str)
+static void	ft_err_msg(int errcode, char *str)
 {
 	if (errcode == 0)
 		printf("Args format\n");

@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 19:36:15 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/25 18:50:02 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/26 16:33:05 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <sys/time.h> //gettimeofday
 # include <limits.h> //INT_MAX
 # include <stdlib.h> // malloc
-# include <string.h> // 
+# include <string.h> // memset
 
 typedef enum e_bool
 {
@@ -62,7 +62,7 @@ int			init_datas(t_data *datas, int ac, char **av);
 void		init_null(t_data *datas);
 
 //struct/init_utils.c
-int			verif_args(t_data *d);
+void		verif_args(t_data *d);
 int			ft_mutex_init(t_data *datas);
 
 // threads/forks.c
@@ -73,8 +73,8 @@ void		take_forks(t_philo *ph);
 void		messages(t_philo *ph, char *str);
 
 // thread/monitor.c
-int			check_state(t_data *dt);
-void		*monitor_fct(void *data_ptr);
+int			end_cond(t_data *dt);
+void		monitor_fct(void *data_ptr);
 
 //utils/errors.c
 void		ft_error(t_data *datas, int errcode, char *str);

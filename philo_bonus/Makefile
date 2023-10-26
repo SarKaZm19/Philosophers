@@ -6,7 +6,7 @@
 #    By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/19 12:55:19 by fvastena          #+#    #+#              #
-#    Updated: 2023/10/19 14:02:15 by fvastena         ###   ########.fr        #
+#    Updated: 2023/10/26 18:31:49 by fvastena         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,14 +15,19 @@
 NAME = philo_bonus
 RMF = rm -f
 RMD = rm -rf
-CFLAGS = -Wall -Wextra -Werror -pthread -O3 #-fsanitize=thread -g 
+CFLAGS = -Wall -Wextra -Werror -pthread -O3 #-fsanitize=thread -g3 
 HDDIR = -Iincludes
 
 #          ----------========== {     SRCS     } ==========----------
 
 SRCS =	main_bonus.c \
+		forks_bonus.c \
+		messages_bonus.c \
+		monitor_bonus.c \
 		init_datas_bonus.c \
+		init_utils_bonus.c \
 		errors_bonus.c \
+		free_bonus.c \
 		ft_atoi_bonus.c \
 		time_bonus.c
 
