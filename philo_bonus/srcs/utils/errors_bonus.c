@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:52:29 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 14:52:31 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 18:48:51 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ void	ft_error(t_data *datas, int errcode, char *str)
 {
 	datas->err_catch = 1;
 	ft_err_msg(errcode, str);
-	ft_free_datas(&datas);
+	if (datas->philos)
+		free(datas->philos);
 }
 
 int	usage_error(void)

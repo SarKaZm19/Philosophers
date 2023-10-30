@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/29 19:36:09 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 14:16:10 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 13:49:11 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ void	p_eating(t_philo *ph)
 {
 	take_forks(ph);
 	messages(ph, "is eating");
-	pthread_mutex_lock(&ph->datas->lock);
 	ph->is_eating = TRUE;
+	pthread_mutex_lock(&ph->datas->lock);
 	ph->last_meal = gettime();
 	if (ph->datas->nb_meal > 0)
 		ph->count_eat++;

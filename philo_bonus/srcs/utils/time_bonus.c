@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:52:23 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/29 21:19:56 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 20:20:47 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,14 @@
 
 void	ft_usleep(uint64_t ms)
 {
-	/* uint64_t	start;
+	uint64_t	start;
 
 	start = gettime();
 	while (gettime() - start < ms)
-		usleep(100); */
-	usleep(ms * 1000);
+		usleep(100);
 }
 
-int64_t	gettime(void)
+int	gettime(void)
 {
 	struct timeval	tv;
 

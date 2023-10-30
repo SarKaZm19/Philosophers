@@ -6,51 +6,42 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 15:22:06 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/27 16:11:08 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 21:14:41 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-/* int	end_cond(t_data *dt)
+void	kill_processes(t_data *datas, int max)
 {
 	int	i;
 
-	i = -1;
-	sem_wait(dt->lock);
-	if (dt->glob_dead == TRUE)
+	i = 0;
+	while (i < max)
 	{
-		sem_post(dt->lock);
-		return (0);
+		kill(datas->philos[i].pid, SIGKILL);
+		i++;
 	}
-	while (++i < dt->nb_philos)
-	{
-		if (dt->philos[i].count_eat < dt->nb_meal || dt->nb_meal == -1)
-		{
-			sem_post(dt->lock);
-			return (1);
-		}
-	}
-	sem_post(dt->lock);
-	return (0);
+	free(datas->philos);
 }
 
-int	monitor_fct(void *data_ptr)
+void	*monitor_fct(void *ph_arg)
 {
-	t_data	*dt;
 	int		i;
+	t_philo *ph;
 
-	dt = (t_data *)data_ptr;
+	ph = ph_arg;
 	while (1)
 	{
-		i = -1;
-		while (++i < dt->nb_philos)
+		if (gettime() - ph->last_meal >= ph->datas->time_to_die)
 		{
-			///sem_wait(dt->lock);
-			//sem_post(dt->lock);
-			if (!end_cond(dt))
-				return (1);
+			sem_wait(ph->datas->lock);
+			printf("%d	%d died\n", gettime() - ph->datas->prog_start, ph->id);
+			i = -1;
+			while (++i < ph->datas->nb_philos)
+				sem_post(ph->datas->fed);
+			return (NULL);
 		}
 	}
-	return (0);
-} */
+	return (NULL);
+}

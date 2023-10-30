@@ -6,50 +6,57 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:52:41 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/30 01:11:14 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 21:17:00 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void	ft_alloc(t_data *datas)
+void	ft_destroy_semaphores(t_data *datas)
 {
-/* 	datas->philos = malloc(sizeof(t_philo) * datas->nb_philos);
-	if (!datas->philos)
-		return (ft_error(datas, 1, "malloc"));
-	memset(datas->philos, 0, datas->nb_philos); */
-	/* datas->philos = malloc(sizeof(t_philo));
-	if (!datas->philos)
-		return (ft_error(datas, 1, "malloc"));
-	datas->pid = malloc(sizeof(t_philo) * datas->nb_philos); */
-	datas->pid = malloc(sizeof(int) * datas->nb_philos);
-	if (!datas->pid)
-	{
-		printf("??\n");
-		return (ft_error(datas, 1, "malloc"));
-	}
-	if (ft_sem_init(datas))
-		return (ft_error(datas, 1, "sem_open"));
-
+	sem_close(datas->forks);
+	sem_close(datas->lock);
+	sem_close(datas->fed);
+	sem_unlink("/s_forks");
+	sem_unlink("/s_lock");
+	sem_unlink("/fed");
 }
 
-/* static void	init_philos(t_data *datas)
+static int	ft_sem_init(t_data *datas)
 {
-	int	i;
-
-	i = -1;
-	while (++i < datas->nb_philos)
+	sem_unlink("/s_forks");
+	sem_unlink("/s_lock");
+	sem_unlink("/s_fed");
+	datas->forks = sem_open("/s_forks", O_CREAT, 0644, datas->nb_philos);
+	if (!datas->forks)
+		return (1);
+	datas->lock = sem_open("/s_lock", O_CREAT, 0644, 1);
+	if (!datas->lock)
 	{
-		datas->philos[i].is_eating = FALSE;
-		datas->philos[i].id = i + 1;
-		datas->philos[i].count_eat = 0;
-		datas->philos[i].last_meal = datas->prog_start;
-		datas->philos[i].time_to_die = datas->death_time;
-		datas->philos[i].time_to_eat = datas->eat_time;
-		datas->philos[i].time_to_sleep = datas->pillow_time;
-		datas->philos[i].datas = datas;
+		sem_close(datas->forks);
+		sem_unlink("/s_forks");
+		return (1);
 	}
-} */
+	datas->fed = sem_open("/s_fed", O_CREAT, 0644, 0);
+	if (!datas->fed)
+	{
+		sem_close(datas->forks);
+		sem_close(datas->lock);
+		sem_unlink("/s_unlink");
+		sem_unlink("/s_forks");
+		return (1);
+	}
+	return (0);
+}
+
+static void	ft_alloc(t_data *datas)
+{
+	if (ft_sem_init(datas))
+		return (ft_error(datas, 1, "sem_open"));
+	datas->philos = malloc(sizeof(*datas->philos) * datas->nb_philos);
+	if (!datas->philos)
+		return (ft_error(datas, 1, "malloc"));
+}
 
 static void	init_times(t_data *datas, int ac, char **av)
 {
@@ -69,37 +76,19 @@ static void	init_times(t_data *datas, int ac, char **av)
 	stime = ft_atoi(av[4]);
 	if (dtime <= 0 || etime <= 0 || stime <= 0 || datas->nb_philos <= 0)
 		return (ft_error(datas, 0, NULL));
-	datas->time_to_die = (__uint64_t) dtime;
-	datas->time_to_eat = (__uint64_t) etime;
-	datas->time_to_sleep = (__uint64_t) stime;
+	datas->time_to_die = (int) dtime;
+	datas->time_to_eat = (int) etime;
+	datas->time_to_sleep = (int) stime;
 }
 
 int	init_datas(t_data *datas, int ac, char **av)
 {
+	datas->err_catch = 0;
 	init_times(datas, ac, av);
 	if (datas->err_catch)
 		return (1);
-	verif_args(datas);
+	ft_alloc(datas);
 	if (datas->err_catch)
 		return (1);
-	datas->prog_start = gettime();
-	if (datas->prog_start == -1)
-		return (1);
-	datas->glob_dead = FALSE;
-
-	ft_alloc(datas);
-	//init_philos(datas);
 	return (0);
 }
-
-/* void	init_null(t_data *datas)
-{
-	//datas->glob_dead = FALSE;
-	datas->nb_philos = 0;
-	datas->nb_meal = -1;
-	datas->err_catch = 0;
-	datas->prog_start = 0;
-	datas->time_to_die = 0;
-	datas->time_to_eat = 0;
-	datas->time_to_sleep = 0;
-} */
