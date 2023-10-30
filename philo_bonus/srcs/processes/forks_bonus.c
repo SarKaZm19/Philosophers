@@ -6,23 +6,22 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:41:30 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 17:52:28 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/29 21:41:39 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void	drop_forks(t_philo *ph)
+void	drop_forks(t_data *datas)
 {
-	sem_post(ph->datas->forks);
-	sem_post(ph->datas->forks);
-
+	sem_post(datas->forks);
+	sem_post(datas->forks);
 }
 
-void	take_forks(t_philo *ph)
+void	take_forks(t_data *datas)
 {
-	sem_wait(ph->datas->forks);
-	messages(ph, "has taken a fork");
-	sem_wait(ph->datas->forks);
-	messages(ph, "has taken a fork");
+	sem_wait(datas->forks);
+	messages(datas, "has taken a fork");
+	sem_wait(datas->forks);
+	messages(datas, "has taken a fork");
 }

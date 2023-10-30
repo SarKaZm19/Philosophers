@@ -6,13 +6,13 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 15:22:06 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 19:27:53 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/27 16:11:08 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	end_cond(t_data *dt)
+/* int	end_cond(t_data *dt)
 {
 	int	i;
 
@@ -53,4 +53,4 @@ int	monitor_fct(void *data_ptr)
 		}
 	}
 	return (0);
-}
+} */

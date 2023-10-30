@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:52:34 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 20:26:13 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 00:47:49 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,16 @@
 
 void	verif_args(t_data *d)
 {
-	if (d->death_time < 0 || d->eat_time < 0 || d->pillow_time < 0
+	if (d->time_to_die < 0 || d->time_to_eat < 0 || d->time_to_sleep < 0
 		|| d->nb_philos <= 0)
 		ft_error(d, 0, NULL);
 }
 
 int	ft_sem_init(t_data *datas)
 {
-	int	i;
+/* 	int	i;
 
-	i = -1;
+	i = -1; */
 	sem_unlink("s_forks");
 	sem_unlink("s_lock");
 	sem_unlink("s_process");
@@ -31,13 +31,12 @@ int	ft_sem_init(t_data *datas)
 	if (!datas->forks)
 		return (1);
 	datas->lock = sem_open("s_lock", O_CREAT, 0600, 1);
-	if (!datas->forks)
+	if (!datas->lock)
 	{
 		sem_close(datas->forks);
 		sem_unlink("s_forks");
 		return (1);
 	}
-	datas->process = sem_open("s_process", O_CREAT, 0600, datas->nb_philos / 2);
 	return (0);
 }
 

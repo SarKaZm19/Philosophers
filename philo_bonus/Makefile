@@ -6,7 +6,7 @@
 #    By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/10/19 12:55:19 by fvastena          #+#    #+#              #
-#    Updated: 2023/10/26 18:31:49 by fvastena         ###   ########.fr        #
+#    Updated: 2023/10/30 01:08:33 by fvastena         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@
 NAME = philo_bonus
 RMF = rm -f
 RMD = rm -rf
-CFLAGS = -Wall -Wextra -Werror -pthread -O3 #-fsanitize=thread -g3 
+CFLAGS = -Wall -Wextra -Werror -pthread -O3 -fsanitize=address -g3 
 HDDIR = -Iincludes
 
 #          ----------========== {     SRCS     } ==========----------

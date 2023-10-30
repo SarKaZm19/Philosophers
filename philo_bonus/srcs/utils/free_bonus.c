@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/26 14:52:09 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 19:42:58 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 01:10:23 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void	ft_destroy_semaphores(t_data *datas)
 {
-	int	i;
-
-	i = -1;
 	sem_close(datas->forks);
 	sem_close(datas->lock);
 	sem_close(datas->process);
@@ -27,6 +24,8 @@ void	ft_destroy_semaphores(t_data *datas)
 
 void	ft_free_datas(t_data **datas)
 {
-	if ((*datas)->philos)
-		free((*datas)->philos);
+	/* if ((*datas)->philos)
+		free((*datas)->philos); */
+	if ((*datas)->pid)
+		free((*datas)->pid);
 }

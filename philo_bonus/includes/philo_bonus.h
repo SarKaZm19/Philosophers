@@ -6,7 +6,7 @@
 /*   By: fvastena <fvastena@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 12:56:51 by fvastena          #+#    #+#             */
-/*   Updated: 2023/10/26 19:40:30 by fvastena         ###   ########.fr       */
+/*   Updated: 2023/10/30 00:55:30 by fvastena         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <unistd.h> // fork
 # include <sys/types.h> //fork
 # include <sys/time.h> // gettimeofday
+# include <pthread.h> // threads
 # include <fcntl.h> // semaphores
 # include <sys/stat.h> // semaphores
 # include <semaphore.h> // semaphores
@@ -36,14 +37,11 @@ typedef enum e_bool
 
 typedef struct s_philo
 {
-	t_bool			is_eating;
+	t_bool			is_dead;
 	int				id;
 	int				count_eat;
-	pid_t			pid;
 	int64_t			last_meal;
-	int64_t			time_to_die;
-	int64_t			time_to_eat;
-	int64_t			time_to_sleep;
+	pthread_t		thid;
 	struct s_data	*datas;
 }				t_philo;
 
@@ -54,24 +52,25 @@ typedef struct s_data
 	int				nb_meal;
 	int				err_catch;
 	int64_t			prog_start;
-	int64_t			death_time;
-	int64_t			eat_time;
-	int64_t			pillow_time;
-	t_philo			*philos;
+	int64_t			time_to_die;
+	int64_t			time_to_eat;
+	int64_t			time_to_sleep;
+	t_philo			philos;
+	pid_t			*pid;
 	sem_t			*process;
 	sem_t			*forks;
 	sem_t			*lock;
 }					t_data;
 
 // srcs/processes/forks_bonus.c
-void	drop_forks(t_philo *ph);
-void	take_forks(t_philo *ph);
+void	drop_forks(t_data *datas);
+void	take_forks(t_data *datas);
 
 // srcs/processes/messages_bonus.c
-void	messages(t_philo *ph, char *str);
+void	messages(t_data *datas, char *str);
 
 // srcs/processes/monitor_bonus.c
-int		monitor_fct(void *data_ptr);
+void	*monitor_fct(void *data_ptr);
 int		end_cond(t_data *dt);
 
 // srcs/structs/init_datas_bonus.c
